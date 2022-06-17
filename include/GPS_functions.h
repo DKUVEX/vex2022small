@@ -9,28 +9,26 @@
 Eigen::Vector2f rings(-5.35f, 10.6f);
 Eigen::Vector2f fGoal(-13.5f, 34.0f);
 Eigen::Vector2f bGoal(-15.0f, -15.0f);
-Eigen::Vector2f gpsPos(0.0f, 0.0f);
-Eigen::Vector2f omniPos(-139.0f, -141.0f);
+Eigen::Vector2f gpsPos(-33.0f, -167.0f);
+Eigen::Vector2f omniPos(-33.0f, -167.0f);
 Eigen::Vector2f globalPos(0.0f, 0.0f);
 Eigen::Vector2f DriftPos(-16.0f, 0.0f);
-
-Eigen::Vector2f OmnitoGPS(10.3f, -3.9f);
-
+Eigen::Vector2f OmnitoGPS(-3.3f, 17.0f);
 Eigen::Vector2f GET(-16.0f, 0.0f);
 
 static float globalRot = PI / 2;
+static float chasFacing = PI / 2;
 bool driftFlag = true;
 
 auto enc2cm = [](float enc, float wc) -> float { return enc * wc / 360; };
+auto absAng = [](float ang) -> float { return ang-2*PI*floor((ang+PI)/(2*PI));};
 
-void Rotate(float w){
-  
-}
+void Rotate(float w){}
 
 void speedForward(Eigen::Vector2f LR) {
   LA.spin(fwd, LR[0], vex::velocityUnits::rpm);
   LB.spin(fwd, LR[0], vex::velocityUnits::rpm);
-  LM.spin(fwd, LR[0], vex::velocityUnits::rpm);
+  RB.spin(fwd, LR[0], vex::velocityUnits::rpm);
   RA.spin(fwd, LR[1], vex::velocityUnits::rpm);
 }
 
@@ -45,6 +43,7 @@ public:
   float lastGyro;
   float deltagyro;
   float insideHalfGyro;
+  
 
 public:
   Chas();
@@ -105,10 +104,10 @@ int positioning() {
   while (1) {
     iter += 1;
 
-    chassis.encoderValues << enc2cm(Hor.rotation(degrees), _SGL_OMNI_CIRCUM_CM_),
+    chassis.encoderValues <<-enc2cm(Hor.rotation(degrees), _SGL_OMNI_CIRCUM_CM_),
                             -enc2cm(Ver.rotation(degrees), _SGL_OMNI_CIRCUM_CM_);
     chassis.theta << chassis.theta[2], chassis.theta[3],
-        -v4gyro.rotation() * PI / 180 + PI / 2,
+        v4gyro.rotation() * PI / 180 + PI / 2,
         -Gyro.rotation(degrees) * PI / 180 + PI / 2;
     chassis.localSpeed = chassis.encoderValues - chassis.lastEncoderValues;
     chassis.printInfo();
@@ -141,15 +140,15 @@ int GPSpositioning() {
   GPS.calibrate();
   while (GPS.isCalibrating()) {delay(10);}
   while (true) {
-    gpsPos << (-GPS.yPosition()) / 10, 
-              ( GPS.xPosition()) / 10;
+    gpsPos << ( GPS.xPosition()) / 10, 
+              ( GPS.yPosition()) / 10;
     delay(10);
   }
   return 0;
 }
 
-bool omnionly = false;
-bool GPSDisable = true;
+bool omnionly = true;
+bool GPSDisable = false;
 
 int posConfig() {
   delay(100);
