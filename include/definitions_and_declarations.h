@@ -47,5 +47,13 @@ using namespace std;
 #define resetGyro()     Gyro.resetRotation()
 #define getliftEncoder  (Lift1.rotation(deg))
 
+#define fw_OFF          0
+#define fw_LOWSPEED     1
+#define fw_HIGHSPEED    2
+#define fw_FULLSPEED    3
+#define fw_AUTO         4
+
+static int fwState = 0;
+static bool ifSpeedOK = false;
 
 #endif

@@ -60,5 +60,63 @@ int base(){
   return 0;
 }
 
+int flywheelContorl(){
+  float fwSpeedTarget = 0, fwEncoder = 0, fwLastEncoder = 0, fwSpeed = 0, fwlastSpeed = 0, fwVolt = 0, fwTargetSpeed = 0;
+  bool ifFwPID = false;
+  while(1){
+    
+    //fwEncoder = (fw1.rotation(rotationUnits::deg) + fw2.rotation(rotationUnits::deg))/2;
+    //fwSpeed = fwEncoder - fwLastEncoder;
+    fwSpeed = fwlastSpeed*0.8f + (fw1.velocity(velocityUnits::rpm)+fw2.velocity(velocityUnits::rpm))*0.2f*5.0f/2.0f;
+
+
+    //printScreen(10,60,"%f",fwSpeed);
+    cout << fwSpeed << " " << fwVolt << endl;
+    //fwLastEncoder = fwEncoder;
+    fwlastSpeed = fwSpeed;
+
+    switch(fwState){
+      case fw_OFF:{
+        fw(0);
+        break;
+      }
+      case fw_LOWSPEED:{
+        //2350
+        fwTargetSpeed = 2135;
+
+        ifSpeedOK = fwSpeed > (fwTargetSpeed-40) && fwSpeed < (fwTargetSpeed+40);
+        if(ifFwPID && fwSpeed < (fwTargetSpeed-50)) ifFwPID = false;
+        else if(!ifFwPID && fwSpeed > fwTargetSpeed-10) ifFwPID = true;
+        fwVolt = ifFwPID?((67)+(fwTargetSpeed-fwSpeed)*0.1):100;
+        fw(fwVolt);
+        
+      
+        break;
+      }
+      case fw_HIGHSPEED:{
+        fwTargetSpeed = 2775;
+
+        ifSpeedOK = fwSpeed > (fwTargetSpeed-5) && fwSpeed < (fwTargetSpeed+5);
+        if(ifFwPID && fwSpeed < (fwTargetSpeed-30)) ifFwPID = false;
+        else if(!ifFwPID && fwSpeed > (fwTargetSpeed-2)) ifFwPID = true;
+        fwVolt = ifFwPID?((90)+(fwTargetSpeed-fwSpeed)*0.15):100;
+        fw(fwVolt);
+        break;
+      }
+      case fw_FULLSPEED:{
+
+        break;
+      }
+      case fw_AUTO:{
+        
+        break;
+      }
+    }
+
+    delay(20);
+  }
+  return 0;
+}
+
 
 #endif

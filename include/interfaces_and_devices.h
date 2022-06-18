@@ -25,8 +25,8 @@ motor LB = motor(PORT10, ratio18_1, false);
 motor RA = motor(PORT5, ratio18_1, false);
 motor RB = motor(PORT9,  ratio18_1, false);
 
-motor fw1 = motor(PORT6,  ratio18_1, false);
-motor fw2 = motor(PORT7,  ratio18_1, false);
+motor fw1 = motor(PORT6,  ratio6_1, true);
+motor fw2 = motor(PORT7,  ratio6_1, true);
 
 motor itk = motor(PORT4, ratio18_1, false);
 motor ind = motor(PORT3, ratio18_1, false);

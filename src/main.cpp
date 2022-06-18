@@ -13,42 +13,28 @@ void usercontrol(void) {
   bool lastUP = false, lastDOWN = false, lastBB = false;
 
   int flywheel = 0;
-  float fwSpeedTarget = 0, fwEncoder = 0, fwLastEncoder = 0, fwSpeed = 0;
+  
   sol.set(0);
   while (1) {
-    if(L1 && !lastl1 && flywheel<=99) flywheel += 5;
-    if(L2 && !lastl2 && flywheel>=1) flywheel -=5;
+
+    LA.spin(fwd, -1300, voltageUnits::mV);
+    LB.spin(fwd, 1300, voltageUnits::mV);
+    RA.spin(fwd, 1300, voltageUnits::mV);
+    RB.spin(fwd, -1300, voltageUnits::mV);
+
+    if(L1 && L2) fwState = fw_OFF;
+    else if(L1) fwState = fw_HIGHSPEED;
+    else if(L2) fwState = fw_LOWSPEED;
     printScreen(10,20,"%d",flywheel);
 
-    if(BB && !lastBB) {
+    if(BB && !lastBB && ifSpeedOK) {
       sol.set(1);
       vexDelay(100);
       sol.set(0);
-
+      vexDelay(120);
     }
-    /*
-  
-    fw1.spin(fwd, flywheel, velocityUnits::pct);
-    fw2.spin(fwd, flywheel, velocityUnits::pct);
 
-    
-    */
-    fwEncoder = (fw1.rotation(rotationUnits::deg) + fw2.rotation(rotationUnits::deg))/2;
-    fwSpeed = fwEncoder - fwLastEncoder;
-    /* 
-    if(UP) fwSpeedTarget = 100;
-    if(DOWN) fwSpeedTarget = 70;
-
-    if(fwSpeed < 0.85*fwSpeedTarget) fw(100);
-    else {
-      if(fwSpeedTarget == 100) fw(100);
-      if(fwSpeedTarget == 70 ) fw(72);
-    }
-    */
-    fw(-flywheel);
     intake(100*(R2-R1));
-    
-    printScreen(10,60,"%f",fwSpeed);
 
     if(BX && !lastBX) sol.set(!sol.value());
 
@@ -58,7 +44,6 @@ void usercontrol(void) {
     lastl1 = L1;
     lastl2 = L2;
     lastBB = BB;
-    fwLastEncoder = fwEncoder;
     vexDelay(10);
   }
 }
@@ -68,7 +53,8 @@ int main() {
   task GP1(positioning);
   task GP2(GPSpositioning);
   task GP(posConfig);
-  task BS(base);
+  //task BS(base);
+  task FW(flywheelContorl);
   vexDelay(200);
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
