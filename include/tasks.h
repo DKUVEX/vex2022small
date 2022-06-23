@@ -4,8 +4,14 @@
 #include "GPS_functions.h"
 
 void fw(float speed){
-  fw1.spin(fwd, 120*speed, voltageUnits::mV);
-  fw2.spin(fwd, 120*speed, voltageUnits::mV);
+  if(speed < 0){
+    fw1.spin(fwd, 0, voltageUnits::mV);
+    fw2.spin(fwd, 0, voltageUnits::mV);
+  }
+  else{
+    fw1.spin(fwd, 120*speed, voltageUnits::mV);
+    fw2.spin(fwd, 120*speed, voltageUnits::mV);
+  }
 }
 
 void intake(float speed){
@@ -16,17 +22,26 @@ void index(float speed){
   ind.spin(fwd, 120*speed, voltageUnits::mV);
 }
 
-int base(){
-  bool manualMode = true, lastBB = false;
+void kick(int ktime){
+  for(int i=0;i<ktime;i++){
+    sol.set(1);
+    vexDelay(100);
+    sol.set(0);
+    vexDelay(220);
+  }  
+}
 
+int base(){
+  bool lastBX = false;
+  
   float absGlbRot = PI / 2, angLock = PI / 2;
   Eigen::Vector2f facingVector; facingVector.Zero();// robot-goal vector
   Eigen::Vector2f chnl34Vector; chnl34Vector.Zero(); // ori ch3-4 input
   Eigen::Matrix2f T; T.Zero();
 
   while(1){
-    if(BB && !lastBB) {
-      manualMode = !manualMode;
+    if(BX && !lastBX) {
+      chState = (chState==3)?0:chState+1;
       angLock = globalRot;
     }
     facingVector << 132-globalPos[0], -132-globalPos[1];
@@ -39,52 +54,81 @@ int base(){
     T << cos(absGlbRot-PI/2), sin(absGlbRot-PI/2), -sin(absGlbRot-PI/2), cos(absGlbRot-PI/2);
     chnl34Vector = T * chnl34Vector;
 
-    if(manualMode){
-      LA.spin(fwd, 100*(Ch1+Ch3+Ch4), voltageUnits::mV);
-      LB.spin(fwd, 100*(Ch1+Ch3-Ch4), voltageUnits::mV);
-      RA.spin(fwd, 100*(Ch1-Ch3+Ch4), voltageUnits::mV);
-      RB.spin(fwd, 100*(Ch1-Ch3-Ch4), voltageUnits::mV);
-    }
-    else{
-      LA.spin(fwd, 100*( chnl34Vector[0] + chnl34Vector[1] - 200*absAng(chasFacing-globalRot)), voltageUnits::mV);
-      LB.spin(fwd, 100*(-chnl34Vector[0] + chnl34Vector[1] - 200*absAng(chasFacing-globalRot)), voltageUnits::mV);
-      RA.spin(fwd, 100*( chnl34Vector[0] - chnl34Vector[1] - 200*absAng(chasFacing-globalRot)), voltageUnits::mV);
-      RB.spin(fwd, 100*(-chnl34Vector[0] - chnl34Vector[1] - 200*absAng(chasFacing-globalRot)), voltageUnits::mV);
-    }
+    switch(chState){
+      case ctrl_DEFAULT:{
+        LA.spin(fwd, 100*(Ch1+Ch3), voltageUnits::mV);//+Ch4
+        LB.spin(fwd, 100*(Ch1+Ch3), voltageUnits::mV);//-Ch4
+        RA.spin(fwd, 100*(Ch1-Ch3), voltageUnits::mV);//+Ch4
+        RB.spin(fwd, 100*(Ch1-Ch3), voltageUnits::mV);//-Ch4
+        break;
+      }
+      case ctrl_MANUAL1:{
 
-    printScreen(10,40,"%f",chnl34Vector[0]);
+        break;
+      }
+      case ctrl_MANUAL2:{
+
+        break;
+      }
+      case ctrl_AUTOAIM:{
+        LA.spin(fwd, 100*( chnl34Vector[0] + chnl34Vector[1] - 200*absAng(chasFacing-globalRot-PI)), voltageUnits::mV);
+        LB.spin(fwd, 100*(-chnl34Vector[0] + chnl34Vector[1] - 200*absAng(chasFacing-globalRot-PI)), voltageUnits::mV);
+        RA.spin(fwd, 100*( chnl34Vector[0] - chnl34Vector[1] - 200*absAng(chasFacing-globalRot-PI)), voltageUnits::mV);
+        RB.spin(fwd, 100*(-chnl34Vector[0] - chnl34Vector[1] - 200*absAng(chasFacing-globalRot-PI)), voltageUnits::mV);
+        break;
+      }
+    }
     delay(10);
-    lastBB = BB;
+    lastBX = BX;
   }
 
   return 0;
 }
 
+float shotPos2time(float dis){
+  //distance unit: cm
+  //time unit: ms
+  return dis*2.5f+200;
+}
+
+float shotPos2fwSpeed(float dis){
+  //distance unit: cm
+  //fwSpeed unit: /
+  return 4*dis+1655;
+}
+
+float fwPower2fwSpeed(){
+
+  return 0;
+}
+
 int flywheelContorl(){
-  float fwSpeedTarget = 0, fwEncoder = 0, fwLastEncoder = 0, fwSpeed = 0, fwlastSpeed = 0, fwVolt = 0, fwTargetSpeed = 0;
+  Eigen::Vector2f goal; goal = redGoal;
+  float fwSpeedTarget = 0, fwEncoder = 0, fwLastEncoder = 0, fwSpeed = 0, fwlastSpeed = 0, fwVolt = 0, fwTargetSpeed = 0, 
+        fwDistance = (goal - globalPos).norm(), fwLastDistance = 0, fwBaseSpeed = 0;
+  float predictShotDis = 0;
+  float predictShotSpd = 0;
   bool ifFwPID = false;
   while(1){
-    
-    //fwEncoder = (fw1.rotation(rotationUnits::deg) + fw2.rotation(rotationUnits::deg))/2;
-    //fwSpeed = fwEncoder - fwLastEncoder;
+    fwDistance = (goal - globalPos).norm();
     fwSpeed = fwlastSpeed*0.8f + (fw1.velocity(velocityUnits::rpm)+fw2.velocity(velocityUnits::rpm))*0.2f*5.0f/2.0f;
-
+    fwBaseSpeed = fwDistance - fwLastDistance;//backward speed
 
     //printScreen(10,60,"%f",fwSpeed);
     cout << fwSpeed << " " << fwVolt << endl;
-    //fwLastEncoder = fwEncoder;
     fwlastSpeed = fwSpeed;
+    fwLastDistance = fwDistance;
 
     switch(fwState){
       case fw_OFF:{
         fw(0);
         break;
       }
-      case fw_LOWSPEED:{
+      case fw_LSPD:{
         //2350
         fwTargetSpeed = 2135;
 
-        ifSpeedOK = fwSpeed > (fwTargetSpeed-40) && fwSpeed < (fwTargetSpeed+40);
+        ifSpeedOK = fwSpeed > (fwTargetSpeed-70) && fwSpeed < (fwTargetSpeed+70);
         if(ifFwPID && fwSpeed < (fwTargetSpeed-50)) ifFwPID = false;
         else if(!ifFwPID && fwSpeed > fwTargetSpeed-10) ifFwPID = true;
         fwVolt = ifFwPID?((67)+(fwTargetSpeed-fwSpeed)*0.1):100;
@@ -93,7 +137,7 @@ int flywheelContorl(){
       
         break;
       }
-      case fw_HIGHSPEED:{
+      case fw_HSPD:{
         fwTargetSpeed = 2775;
 
         ifSpeedOK = fwSpeed > (fwTargetSpeed-5) && fwSpeed < (fwTargetSpeed+5);
@@ -103,12 +147,29 @@ int flywheelContorl(){
         fw(fwVolt);
         break;
       }
-      case fw_FULLSPEED:{
+      case fw_FSPD:{
 
         break;
       }
       case fw_AUTO:{
         
+        fwDistance = (goal - globalPos).norm();
+        predictShotDis = fwDistance + 100*fwBaseSpeed;
+        predictShotSpd = shotPos2fwSpeed(predictShotDis + (shotPos2time(predictShotDis)-100)*fwBaseSpeed);
+        fwTargetSpeed = predictShotSpd;
+
+        
+        
+        break;
+      }
+      case fw_CONT:{
+        fwTargetSpeed = 2135;
+
+        //ifSpeedOK = fwSpeed > (fwTargetSpeed-70) && fwSpeed < (fwTargetSpeed+70);
+        if(ifFwPID && fwSpeed < (fwTargetSpeed-50)) ifFwPID = false;
+        else if(!ifFwPID && fwSpeed > fwTargetSpeed-50) ifFwPID = true;
+        fwVolt = ifFwPID?((67)+(fwTargetSpeed-fwSpeed)*0.5):100;
+        fw(fwVolt);
         break;
       }
     }

@@ -19,9 +19,9 @@ brain Brain;
 controller Controller1 = controller(primary);
 competition Competition;
 
-// Motor
-motor LA = motor(PORT2, ratio18_1, false);
-motor LB = motor(PORT10, ratio18_1, false);
+// Motorjh
+motor LA = motor(PORT10, ratio18_1, false);
+motor LB = motor(PORT8, ratio18_1, false);
 motor RA = motor(PORT5, ratio18_1, false);
 motor RB = motor(PORT9,  ratio18_1, false);
 
@@ -32,7 +32,7 @@ motor itk = motor(PORT4, ratio18_1, false);
 motor ind = motor(PORT3, ratio18_1, false);
 
 // Encoder
-encoder Hor = encoder(Brain.ThreeWirePort.G);
+encoder Hor = encoder(Brain.ThreeWirePort.C);
 encoder Ver = encoder(Brain.ThreeWirePort.A);
 
 digital_out sol = digital_out(Brain.ThreeWirePort.H);
@@ -40,7 +40,7 @@ digital_out sol = digital_out(Brain.ThreeWirePort.H);
 // Sensor
 gps GPS = gps(PORT15, 0.00, 0.00, mm, 0.00);
 
-inertial Gyro = inertial(PORT1);
-gyro v4gyro = gyro(Brain.ThreeWirePort.E);
+inertial Gyro = inertial(PORT3);
+gyro v4gyro = gyro(Brain.ThreeWirePort.G);
 
 #endif

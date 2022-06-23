@@ -21,7 +21,13 @@ static float chasFacing = PI / 2;
 bool driftFlag = true;
 
 auto enc2cm = [](float enc, float wc) -> float { return enc * wc / 360; };
+//R-> [-pi,pi]
 auto absAng = [](float ang) -> float { return ang-2*PI*floor((ang+PI)/(2*PI));};
+float localV2GloRot(Eigen::Vector2f local){
+  Eigen::Vector2f glbRot(0.0f, 1.0f);
+  return glbRot.dot(local)/local.norm();
+}
+
 
 void Rotate(float w){}
 
@@ -180,9 +186,9 @@ void drift(float driftX, float driftY, int tp = 1, float speedratio = 1.0f,
   Eigen::Vector2f TLR = Eigen::Vector2f::Zero();
 
   switch (tp) {
-  case 0: localTrackingPos = bGoal; break;
-  case 1: localTrackingPos = fGoal; break;
-  case 2: localTrackingPos = rings; break;
+    case 0: localTrackingPos = bGoal; break;
+    case 1: localTrackingPos = fGoal; break;
+    case 2: localTrackingPos = rings; break;
   }
 
   float omega = PI / 4 - 0.05;

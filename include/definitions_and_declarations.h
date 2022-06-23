@@ -48,12 +48,26 @@ using namespace std;
 #define getliftEncoder  (Lift1.rotation(deg))
 
 #define fw_OFF          0
-#define fw_LOWSPEED     1
-#define fw_HIGHSPEED    2
-#define fw_FULLSPEED    3
+#define fw_LSPD         1
+#define fw_HSPD         2
+#define fw_FSPD         3
 #define fw_AUTO         4
+#define fw_CONT         5
 
-static int fwState = 0;
+#define ctrl_DEFAULT    0
+#define ctrl_MANUAL1    1
+#define ctrl_MANUAL2    2
+#define ctrl_AUTOAIM    3
+
+static int fwState = fw_OFF;
+static int chState = ctrl_DEFAULT;
+
 static bool ifSpeedOK = false;
+
+static float fw_angBias = 0.0565f;
+
+Eigen::Vector2f blueGoal(-132.0f, 132.0f);
+Eigen::Vector2f redGoal(132.0f, -132.0f);
+
 
 #endif

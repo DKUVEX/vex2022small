@@ -16,27 +16,33 @@ void usercontrol(void) {
   
   sol.set(0);
   while (1) {
-
+    /*
     LA.spin(fwd, -1300, voltageUnits::mV);
     LB.spin(fwd, 1300, voltageUnits::mV);
     RA.spin(fwd, 1300, voltageUnits::mV);
     RB.spin(fwd, -1300, voltageUnits::mV);
+    */
 
     if(L1 && L2) fwState = fw_OFF;
-    else if(L1) fwState = fw_HIGHSPEED;
-    else if(L2) fwState = fw_LOWSPEED;
-    printScreen(10,20,"%d",flywheel);
+    else if(L1) fwState = fw_HSPD;
+    else if(L2) fwState = fw_LSPD;
 
-    if(BB && !lastBB && ifSpeedOK) {
-      sol.set(1);
-      vexDelay(100);
-      sol.set(0);
-      vexDelay(120);
+    //cout << BB << endl;
+
+
+    if((fwState == fw_LSPD) && L2 && BB && !lastBB && ifSpeedOK){
+      fwState = fw_CONT;
+      kick(3);
+      fwState = fw_LSPD;
+    }
+    else if(BB && !lastBB && ifSpeedOK) {
+      kick(1);
     }
 
     intake(100*(R2-R1));
+    index(100*BA);
 
-    if(BX && !lastBX) sol.set(!sol.value());
+    //if(BX && !lastBX) sol.set(!sol.value());
 
     lastBX = BX;
     lastr1 = R1;
@@ -53,7 +59,7 @@ int main() {
   task GP1(positioning);
   task GP2(GPSpositioning);
   task GP(posConfig);
-  //task BS(base);
+  task BS(base);
   task FW(flywheelContorl);
   vexDelay(200);
   Competition.autonomous(autonomous);
