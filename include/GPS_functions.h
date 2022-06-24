@@ -110,8 +110,8 @@ int positioning() {
   while (1) {
     iter += 1;
 
-    chassis.encoderValues <<-enc2cm(Hor.rotation(degrees), _SGL_OMNI_CIRCUM_CM_),
-                            -enc2cm(Ver.rotation(degrees), _SGL_OMNI_CIRCUM_CM_);
+    chassis.encoderValues << enc2cm(Hor.rotation(degrees), _SGL_OMNI_CIRCUM_CM_),
+                             enc2cm(Ver.rotation(degrees), _SGL_OMNI_CIRCUM_CM_);
     chassis.theta << chassis.theta[2], chassis.theta[3],
         v4gyro.rotation() * PI / 180 + PI / 2,
         -Gyro.rotation(degrees) * PI / 180 + PI / 2;

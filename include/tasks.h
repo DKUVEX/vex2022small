@@ -54,6 +54,8 @@ int base(){
     T << cos(absGlbRot-PI/2), sin(absGlbRot-PI/2), -sin(absGlbRot-PI/2), cos(absGlbRot-PI/2);
     chnl34Vector = T * chnl34Vector;
 
+    cout << chState << endl;
+
     switch(chState){
       case ctrl_DEFAULT:{
         LA.spin(fwd, 100*(Ch1+Ch3), voltageUnits::mV);//+Ch4
@@ -63,23 +65,34 @@ int base(){
         break;
       }
       case ctrl_MANUAL1:{
-
+        LA.spin(fwd, 100*(Ch1+Ch3), voltageUnits::mV);//+Ch4
+        LB.spin(fwd, 100*(Ch1+Ch3), voltageUnits::mV);//-Ch4
+        RA.spin(fwd, 100*(Ch1-Ch3), voltageUnits::mV);//+Ch4
+        RB.spin(fwd, 100*(Ch1-Ch3), voltageUnits::mV);//-Ch4
         break;
       }
       case ctrl_MANUAL2:{
-
+        LA.spin(fwd, 100*(Ch1+Ch3), voltageUnits::mV);//+Ch4
+        LB.spin(fwd, 100*(Ch1+Ch3), voltageUnits::mV);//-Ch4
+        RA.spin(fwd, 100*(Ch1-Ch3), voltageUnits::mV);//+Ch4
+        RB.spin(fwd, 100*(Ch1-Ch3), voltageUnits::mV);//-Ch4
         break;
       }
       case ctrl_AUTOAIM:{
+        fwState = fw_AUTO;
         LA.spin(fwd, 100*( chnl34Vector[0] + chnl34Vector[1] - 200*absAng(chasFacing-globalRot-PI)), voltageUnits::mV);
         LB.spin(fwd, 100*(-chnl34Vector[0] + chnl34Vector[1] - 200*absAng(chasFacing-globalRot-PI)), voltageUnits::mV);
         RA.spin(fwd, 100*( chnl34Vector[0] - chnl34Vector[1] - 200*absAng(chasFacing-globalRot-PI)), voltageUnits::mV);
         RB.spin(fwd, 100*(-chnl34Vector[0] - chnl34Vector[1] - 200*absAng(chasFacing-globalRot-PI)), voltageUnits::mV);
+        cout << chasFacing << endl;
         break;
       }
+
+      
+      
     }
-    delay(10);
     lastBX = BX;
+    delay(10);
   }
 
   return 0;
@@ -114,8 +127,8 @@ int flywheelContorl(){
     fwSpeed = fwlastSpeed*0.8f + (fw1.velocity(velocityUnits::rpm)+fw2.velocity(velocityUnits::rpm))*0.2f*5.0f/2.0f;
     fwBaseSpeed = fwDistance - fwLastDistance;//backward speed
 
-    //printScreen(10,60,"%f",fwSpeed);
-    cout << fwSpeed << " " << fwVolt << endl;
+    if(ifSpeedOK){ printScreen(10,100,"OK");} else  printScreen(10,100,"    ");
+    //cout << fwSpeed << " " << fwVolt << endl;
     fwlastSpeed = fwSpeed;
     fwLastDistance = fwDistance;
 
@@ -158,7 +171,11 @@ int flywheelContorl(){
         predictShotSpd = shotPos2fwSpeed(predictShotDis + (shotPos2time(predictShotDis)-100)*fwBaseSpeed);
         fwTargetSpeed = predictShotSpd;
 
-        
+        ifSpeedOK = fwSpeed > (fwTargetSpeed-35) && fwSpeed < (fwTargetSpeed+35);
+        if(ifFwPID && fwSpeed < (fwTargetSpeed-30)) ifFwPID = false;
+        else if(!ifFwPID && fwSpeed > (fwTargetSpeed-2)) ifFwPID = true;
+        fwVolt = ifFwPID?((90)+(fwTargetSpeed-fwSpeed)*0.2):100;
+        fw(fwVolt);
         
         break;
       }

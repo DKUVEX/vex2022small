@@ -32,15 +32,15 @@ motor itk = motor(PORT4, ratio18_1, false);
 motor ind = motor(PORT3, ratio18_1, false);
 
 // Encoder
-encoder Hor = encoder(Brain.ThreeWirePort.C);
-encoder Ver = encoder(Brain.ThreeWirePort.A);
+encoder Hor = encoder(Brain.ThreeWirePort.A);
+encoder Ver = encoder(Brain.ThreeWirePort.C);
 
-digital_out sol = digital_out(Brain.ThreeWirePort.H);
+digital_out sol = digital_out(Brain.ThreeWirePort.G);
 
 // Sensor
 gps GPS = gps(PORT15, 0.00, 0.00, mm, 0.00);
 
 inertial Gyro = inertial(PORT3);
-gyro v4gyro = gyro(Brain.ThreeWirePort.G);
+gyro v4gyro = gyro(Brain.ThreeWirePort.H);
 
 #endif
