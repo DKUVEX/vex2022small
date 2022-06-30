@@ -9,28 +9,27 @@ void autonomous(void) {
 }
 
 void usercontrol(void) {
-  bool lastBB = false;
+  bool lastL1 = false;
   
   sol.set(0);
   while (1) {
 
-    if(L1 && L2) fwState = fw_OFF;
-    else if(L1) fwState = fw_HSPD;
-    else if(L2) fwState = fw_LSPD;
+    if(BB) fwState = fw_OFF;
+    else if(L2 && R1) fwState = fw_HSPD;
+    else if(L2 && R2) fwState = fw_LSPD;
 
-    if((fwState == fw_LSPD) && L2 && BB && !lastBB && ifSpeedOK){
-      fwState = fw_CONT;
-      kick(3);
-      fwState = fw_LSPD;
+    if(fwState == fw_LSPD && kCount > 0) {
+      kick(1);
+      kCount -= 1;
     }
-    else if(BB && !lastBB && ifSpeedOK) {
+    else if(fwState == fw_HSPD && ifSpeedOK && L1 && !lastL1){
       kick(1);
     }
 
-    intake(100*(R2-R1));
-    index(100*BA);
+    intake(100*(R2-R1)*!L2);
+    //index(100*BA);
     
-    lastBB = BB;
+    lastL1 = L1;
     vexDelay(10);
   }
 }
@@ -42,6 +41,8 @@ int main() {
   task GP(posConfig);
   task BS(base);
   task FW(flywheelContorl);
+  task LA(launch);
+
   vexDelay(200);
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);

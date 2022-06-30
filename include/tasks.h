@@ -54,21 +54,21 @@ int base(){
     T << cos(absGlbRot-PI/2), sin(absGlbRot-PI/2), -sin(absGlbRot-PI/2), cos(absGlbRot-PI/2);
     chnl34Vector = T * chnl34Vector;
 
-    cout << chState << endl;
+    //cout << chState << endl;
 
     switch(chState){
       case ctrl_DEFAULT:{
-        LA.spin(fwd, 100*(Ch1+Ch3), voltageUnits::mV);//+Ch4
-        LB.spin(fwd, 100*(Ch1+Ch3), voltageUnits::mV);//-Ch4
-        RA.spin(fwd, 100*(Ch1-Ch3), voltageUnits::mV);//+Ch4
-        RB.spin(fwd, 100*(Ch1-Ch3), voltageUnits::mV);//-Ch4
+        LA.spin(fwd, 100*(Ch1+Ch3), voltageUnits::mV);
+        LB.spin(fwd, 100*(Ch1+Ch3), voltageUnits::mV);
+        RA.spin(fwd, 100*(Ch1-Ch3), voltageUnits::mV);
+        RB.spin(fwd, 100*(Ch1-Ch3), voltageUnits::mV);
         break;
       }
       case ctrl_MANUAL1:{
-        LA.spin(fwd, 100*(Ch1+Ch3), voltageUnits::mV);//+Ch4
-        LB.spin(fwd, 100*(Ch1+Ch3), voltageUnits::mV);//-Ch4
-        RA.spin(fwd, 100*(Ch1-Ch3), voltageUnits::mV);//+Ch4
-        RB.spin(fwd, 100*(Ch1-Ch3), voltageUnits::mV);//-Ch4
+        LA.spin(fwd, 100*(Ch1+Ch3+Ch4), voltageUnits::mV);
+        LB.spin(fwd, 100*(Ch1+Ch3-Ch4), voltageUnits::mV);
+        RA.spin(fwd, 100*(Ch1-Ch3+Ch4), voltageUnits::mV);
+        RB.spin(fwd, 100*(Ch1-Ch3-Ch4), voltageUnits::mV);
         break;
       }
       case ctrl_MANUAL2:{
@@ -84,12 +84,9 @@ int base(){
         LB.spin(fwd, 100*(-chnl34Vector[0] + chnl34Vector[1] - 200*absAng(chasFacing-globalRot-PI)), voltageUnits::mV);
         RA.spin(fwd, 100*( chnl34Vector[0] - chnl34Vector[1] - 200*absAng(chasFacing-globalRot-PI)), voltageUnits::mV);
         RB.spin(fwd, 100*(-chnl34Vector[0] - chnl34Vector[1] - 200*absAng(chasFacing-globalRot-PI)), voltageUnits::mV);
-        cout << chasFacing << endl;
+        //cout << chasFacing << endl;
         break;
       }
-
-      
-      
     }
     lastBX = BX;
     delay(10);
@@ -128,6 +125,7 @@ int flywheelContorl(){
     fwBaseSpeed = fwDistance - fwLastDistance;//backward speed
 
     if(ifSpeedOK){ printScreen(10,100,"OK");} else  printScreen(10,100,"    ");
+    printScreen(10,120,"%f   ", fwSpeed);
     //cout << fwSpeed << " " << fwVolt << endl;
     fwlastSpeed = fwSpeed;
     fwLastDistance = fwDistance;
@@ -139,25 +137,25 @@ int flywheelContorl(){
       }
       case fw_LSPD:{
         //2350
-        fwTargetSpeed = 2135;
+        fwTargetSpeed = 2135; //2135 
 
-        ifSpeedOK = fwSpeed > (fwTargetSpeed-70) && fwSpeed < (fwTargetSpeed+70);
+        ifSpeedOK = fwSpeed > (fwTargetSpeed-150) && fwSpeed < (fwTargetSpeed+50);
         if(ifFwPID && fwSpeed < (fwTargetSpeed-50)) ifFwPID = false;
         else if(!ifFwPID && fwSpeed > fwTargetSpeed-10) ifFwPID = true;
-        fwVolt = ifFwPID?((67)+(fwTargetSpeed-fwSpeed)*0.1):100;
-        fw(fwVolt);
+        fwVolt = ifFwPID?((68)+(fwTargetSpeed-fwSpeed)*0.1):100;
+        fw(DOWN?68:fwVolt);
         
       
         break;
       }
       case fw_HSPD:{
-        fwTargetSpeed = 2775;
+        fwTargetSpeed = 2775; //2775
 
         ifSpeedOK = fwSpeed > (fwTargetSpeed-5) && fwSpeed < (fwTargetSpeed+5);
         if(ifFwPID && fwSpeed < (fwTargetSpeed-30)) ifFwPID = false;
         else if(!ifFwPID && fwSpeed > (fwTargetSpeed-2)) ifFwPID = true;
         fwVolt = ifFwPID?((90)+(fwTargetSpeed-fwSpeed)*0.15):100;
-        fw(fwVolt);
+        fw(DOWN?90:fwVolt);
         break;
       }
       case fw_FSPD:{
@@ -195,6 +193,22 @@ int flywheelContorl(){
   }
   return 0;
 }
+
+int launch(){
+  bool lastL1 = false;
+  while(1){
+    //if(L1 && !lastL1 && kCount < 3) kCount+=1;
+    //if(L2 && L1) kCount = 3;
+    if(L1 && !lastL1) kCount += 3;
+    if(!L1 && lastL1) kCount -= 2;
+    if(kCount > 3) kCount = 3;
+    if(kCount < 0) kCount = 0;
+    lastL1 = L1;
+    vexDelay(10);
+  }
+  return 0;
+}
+
 
 
 #endif

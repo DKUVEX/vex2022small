@@ -61,6 +61,7 @@ using namespace std;
 
 static int fwState = fw_OFF;
 static int chState = ctrl_DEFAULT;
+static int kCount = 0;
 
 static bool ifSpeedOK = false;
 
