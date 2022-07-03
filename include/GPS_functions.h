@@ -7,10 +7,10 @@
 #include "definitions_and_declarations.h"
 
 Eigen::Vector2f rings(-5.35f, 10.6f);
-Eigen::Vector2f fGoal(-13.5f, 34.0f);
+Eigen::Vector2f fGoal(0.0f, 34.0f);
 Eigen::Vector2f bGoal(-15.0f, -15.0f);
-Eigen::Vector2f gpsPos(-33.0f, -167.0f);
-Eigen::Vector2f omniPos(-33.0f, -167.0f);
+Eigen::Vector2f gpsPos(-21.5f, -180.0f);
+Eigen::Vector2f omniPos(-21.5f, -180.0f);
 Eigen::Vector2f globalPos(0.0f, 0.0f);
 Eigen::Vector2f DriftPos(-16.0f, 0.0f);
 Eigen::Vector2f OmnitoGPS(-3.3f, 17.0f);
@@ -34,7 +34,7 @@ void Rotate(float w){}
 void speedForward(Eigen::Vector2f LR) {
   LA.spin(fwd, LR[0], vex::velocityUnits::rpm);
   LB.spin(fwd, LR[0], vex::velocityUnits::rpm);
-  RB.spin(fwd, LR[0], vex::velocityUnits::rpm);
+  RB.spin(fwd, LR[1], vex::velocityUnits::rpm);
   RA.spin(fwd, LR[1], vex::velocityUnits::rpm);
 }
 
@@ -110,10 +110,10 @@ int positioning() {
   while (1) {
     iter += 1;
 
-    chassis.encoderValues << enc2cm(Hor.rotation(degrees), _SGL_OMNI_CIRCUM_CM_),
+    chassis.encoderValues << enc2cm(-Hor.rotation(degrees), _SGL_OMNI_CIRCUM_CM_),
                              enc2cm(Ver.rotation(degrees), _SGL_OMNI_CIRCUM_CM_);
     chassis.theta << chassis.theta[2], chassis.theta[3],
-        v4gyro.rotation() * PI / 180 + PI / 2,
+        -v4gyro.rotation() * PI / 180 + PI / 2,
         -Gyro.rotation(degrees) * PI / 180 + PI / 2;
     chassis.localSpeed = chassis.encoderValues - chassis.lastEncoderValues;
     chassis.printInfo();
@@ -225,6 +225,19 @@ void drift(float driftX, float driftY, int tp = 1, float speedratio = 1.0f,
   cout << localTarget << " " << speedratio << " " << brakeRatio << endl;
 
   return;
+}
+
+void drift(float driftX, float driftY, float targetAng, int tp = 1, float speedratio = 1.0f, float brakeRatio = 0.4) { 
+  Eigen::Vector2f driftTarget(driftX, driftY);
+  Eigen::Vector2f diff; diff = driftTarget - globalPos;
+  float rho, alpha, beta, v, w;
+  while(diff.norm()>1){
+    diff = driftTarget - globalPos;
+    rho = diff.norm();
+    alpha = absAng(atan(diff[1]/diff[0])-globalRot);
+    beta = absAng(targetAng - globalRot - alpha);
+    
+  }
 }
 
 Eigen::Vector2f getPos(Eigen::Vector2f localPos) {

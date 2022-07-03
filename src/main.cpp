@@ -4,13 +4,16 @@ using namespace vex;
 using namespace std;
 
 void autonomous(void) {
+  chState = ctrl_AUTONOMOUS;
   //runAuton();
   //oneminute310p();
+  drift(50, 0);
+  drift(-100, 0);
 }
 
 void usercontrol(void) {
   bool lastL1 = false;
-  
+  chState = ctrl_DEFAULT;
   sol.set(0);
   while (1) {
 
@@ -30,6 +33,9 @@ void usercontrol(void) {
     //index(100*BA);
     
     lastL1 = L1;
+    // cout<<Hor.rotation(deg)<<"  "<<Ver.rotation(deg)<<endl;
+    //printScreen(10,140,"x:%.2f y:%.2f v4gyro:%.2f v5gyro:%.2f",omniPos[0], omniPos[1], -v4gyro.rotation(),-Gyro.rotation());
+
     vexDelay(10);
   }
 }

@@ -87,6 +87,10 @@ int base(){
         //cout << chasFacing << endl;
         break;
       }
+      case ctrl_AUTONOMOUS:{
+        delay(100);
+        break;
+      }
     }
     lastBX = BX;
     delay(10);
@@ -121,7 +125,7 @@ int flywheelContorl(){
   bool ifFwPID = false;
   while(1){
     fwDistance = (goal - globalPos).norm();
-    fwSpeed = fwlastSpeed*0.8f + (fw1.velocity(velocityUnits::rpm)+fw2.velocity(velocityUnits::rpm))*0.2f*5.0f/2.0f;
+    fwSpeed = fwlastSpeed*0.95f + (fw1.velocity(velocityUnits::rpm)+fw2.velocity(velocityUnits::rpm))*0.05f*5.0f/2.0f;
     fwBaseSpeed = fwDistance - fwLastDistance;//backward speed
 
     if(ifSpeedOK){ printScreen(10,100,"OK");} else  printScreen(10,100,"    ");

@@ -58,6 +58,7 @@ using namespace std;
 #define ctrl_MANUAL1    1
 #define ctrl_MANUAL2    2
 #define ctrl_AUTOAIM    3
+#define ctrl_AUTONOMOUS 4
 
 static int fwState = fw_OFF;
 static int chState = ctrl_DEFAULT;
