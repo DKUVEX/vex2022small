@@ -34,8 +34,8 @@ void Rotate(float w){}
 void speedForward(Eigen::Vector2f LR) {
   LA.spin(fwd, LR[0], vex::velocityUnits::rpm);
   LB.spin(fwd, LR[0], vex::velocityUnits::rpm);
-  RB.spin(fwd, LR[1], vex::velocityUnits::rpm);
-  RA.spin(fwd, LR[1], vex::velocityUnits::rpm);
+  RB.spin(fwd, -LR[1], vex::velocityUnits::rpm);
+  RA.spin(fwd, -LR[1], vex::velocityUnits::rpm);
 }
 
 class Chas {
@@ -191,7 +191,7 @@ void drift(float driftX, float driftY, int tp = 1, float speedratio = 1.0f,
     case 2: localTrackingPos = rings; break;
   }
 
-  float omega = PI / 4 - 0.05;
+  float omega = PI / 6;
   Eigen::Matrix2f MotionVector;
   MotionVector << cos(omega), -cos(omega), sin(omega), sin(omega);
 
@@ -218,11 +218,11 @@ void drift(float driftX, float driftY, int tp = 1, float speedratio = 1.0f,
     }
     TLR << LR[1], LR[0];
     speedForward(tp == 0 ? TLR : LR);
-
+    cout << LR  << endl;
     vexDelay(10);
   }
   speedForward(Eigen::Vector2f(0.0f, 0.0f));
-  cout << localTarget << " " << speedratio << " " << brakeRatio << endl;
+  
 
   return;
 }
