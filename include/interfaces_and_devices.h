@@ -38,7 +38,7 @@ encoder Ver = encoder(Brain.ThreeWirePort.A);
 digital_out sol = digital_out(Brain.ThreeWirePort.C);
 
 // Sensor
-gps GPS = gps(PORT13, -100, +20, mm, 180);
+gps GPS = gps(PORT13, 0, 0, mm, 180);
 
 inertial Gyro = inertial(PORT3);//old inertial
 inertial Iner = inertial(PORT14);

@@ -22,7 +22,8 @@ bool driftFlag = true;
 
 static double gps_xpos = 0;// xposition from gps
 static double gps_ypos = 0;// yposition from gps
-static double yaw_orientation = 0;// yaw orientation from Iner
+static double GPS_yaw_orientation = 0;// yaw orientation from GPS
+static double Iner_yaw_orientation = 0;// yaw orientation from Iner
 static double x_acc = 0;// x axis acceleration from Iner
 static double y_acc = 0;// y axis acceleration from Iner
 auto enc2cm = [](float enc, float wc) -> float { return enc * wc / 360; };
@@ -160,9 +161,11 @@ int GPSpositioning() {
               ( GPS.yPosition()) / 10;// gpsPos暂时无用
     gps_xpos = GPS.xPosition();
     gps_ypos = GPS.yPosition();
+    GPS_yaw_orientation = GPS.orientation(yaw, deg);
+    //场地定位比较准确，但是在最靠近四周一格地垫会进入死区无法定位
     delay(10);
     // cout<<"gps_x: "<<GPS.xPosition()<<" gps_y: "<<GPS.yPosition()<<endl;
-    // cout<<"gps_x: "<<gps_xpos<<" gps_y: "<<gps_ypos<<endl;
+    cout<<"gps_x: "<<gps_xpos<<" gps_y: "<<gps_ypos<<" gps_yaw: "<<GPS_yaw_orientation<<endl;
     // cout<<"gpsPos: "<<gpsPo  s<<endl<<" x: "<<GPS.xPosition()<<" y: "<<GPS.yPosition()<<endl;
   }
   return 0;
@@ -174,11 +177,11 @@ int Inertialposiyioning()
   while (Iner.isCalibrating()) {delay(10);}
   while (true) {
     // yaw_orientation = Iner.yaw();
-    yaw_orientation = Iner.orientation(yaw, deg);
+    Iner_yaw_orientation = Iner.orientation(yaw, deg);
     x_acc = Iner.acceleration(xaxis) + 0.24;
     y_acc = Iner.acceleration(yaxis) + 0.29;//0,.23 and 0.29 are zero drift
     // cout<<"yaw: "<<yaw_orientation<<endl;
-    cout<<"x_acc: "<<x_acc<<" y_acc: "<<y_acc<<endl;
+    // cout<<"x_acc: "<<x_acc<<" y_acc: "<<y_acc<<endl;
     delay(10);
   }
   return 0;
