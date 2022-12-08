@@ -5,7 +5,7 @@
 #undef __ARM_NEON
 
 #include "definitions_and_declarations.h"
-
+// # include <pros> 
 Eigen::Vector2f rings(-5.35f, 10.6f);
 Eigen::Vector2f fGoal(0.0f, 34.0f);
 Eigen::Vector2f bGoal(-15.0f, -15.0f);
@@ -19,6 +19,9 @@ Eigen::Vector2f GET(-16.0f, 0.0f);
 static float globalRot = PI / 2;
 static float chasFacing = PI / 2;
 bool driftFlag = true;
+
+static double gps_xpos = 0;// xposition from gps
+static double gps_ypos = 0;// yposition from gps
 
 auto enc2cm = [](float enc, float wc) -> float { return enc * wc / 360; };
 //R-> [-pi,pi]
@@ -140,19 +143,38 @@ int positioning() {
   }
   return 0;
 }
-
+//写的好乱，重写一遍需要的部分
 int GPSpositioning() {
   delay(100);
+  // pros::gps_initialize_full(PORT13, 0, 0, 0, 0, 180);
   GPS.calibrate();
+  // cout<<"!!!!"<<endl;
   while (GPS.isCalibrating()) {delay(10);}
+  // cout<<"????"<<endl;
+  // if(GPS.installed()) {cout<<"ok"<<endl;}
+  // else {cout<<"not ok"<<endl;}
   while (true) {
     gpsPos << ( GPS.xPosition()) / 10, 
-              ( GPS.yPosition()) / 10;
+              ( GPS.yPosition()) / 10;// gpsPos暂时无用
+    gps_xpos = GPS.xPosition();
+    gps_ypos = GPS.yPosition();
     delay(10);
+    // cout<<"gps_x: "<<GPS.xPosition()<<" gps_y: "<<GPS.yPosition()<<endl;
+    // cout<<"gps_x: "<<gps_xpos<<" gps_y: "<<gps_ypos<<endl;
+    // cout<<"gpsPos: "<<gpsPo  s<<endl<<" x: "<<GPS.xPosition()<<" y: "<<GPS.yPosition()<<endl;
   }
   return 0;
 }
+int Inertialposiyioning()
+{
+  delay(100);
+  Iner.calibrate();
+  while (Iner.isCalibrating()) {delay(10);}
+  while (true) {
 
+  }
+  return 0;
+}
 bool omnionly = true;
 bool GPSDisable = false;
 

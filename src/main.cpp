@@ -52,7 +52,6 @@ int main() {
   vexDelay(200);
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
-
   while (true) {
     vexDelay(100);
   }

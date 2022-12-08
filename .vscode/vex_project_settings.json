@@ -1,0 +1,18 @@
+{
+	"project": {
+		"name": "small",
+		"slot": 1,
+		"description": "6MChassis (GPDS)",
+		"platform": "V5",
+		"creationDate": "Wed, 07 Dec 2022 10:13:38 GMT",
+		"language": "cpp",
+		"sdkVersion": "V5_20220726_10_00_00",
+		"cpp": {
+			"includePath": []
+		}
+	},
+	"extension": {
+		"version": "0.3.0",
+		"json": 1
+	}
+}
