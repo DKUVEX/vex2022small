@@ -44,10 +44,12 @@ int main() {
   vexDelay(200);
   task GP1(positioning);
   task GP2(GPSpositioning);
+  task GP3(Inertialposiyioning);
   task GP(posConfig);
   task BS(base);
   task FW(flywheelContorl);
   task LA(launch);
+
 
   vexDelay(200);
   Competition.autonomous(autonomous);

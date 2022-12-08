@@ -22,7 +22,9 @@ bool driftFlag = true;
 
 static double gps_xpos = 0;// xposition from gps
 static double gps_ypos = 0;// yposition from gps
-
+static double yaw_orientation = 0;// yaw orientation from Iner
+static double x_acc = 0;// x axis acceleration from Iner
+static double y_acc = 0;// y axis acceleration from Iner
 auto enc2cm = [](float enc, float wc) -> float { return enc * wc / 360; };
 //R-> [-pi,pi]
 auto absAng = [](float ang) -> float { return ang-2*PI*floor((ang+PI)/(2*PI));};
@@ -171,7 +173,13 @@ int Inertialposiyioning()
   Iner.calibrate();
   while (Iner.isCalibrating()) {delay(10);}
   while (true) {
-
+    // yaw_orientation = Iner.yaw();
+    yaw_orientation = Iner.orientation(yaw, deg);
+    x_acc = Iner.acceleration(xaxis) + 0.24;
+    y_acc = Iner.acceleration(yaxis) + 0.29;//0,.23 and 0.29 are zero drift
+    // cout<<"yaw: "<<yaw_orientation<<endl;
+    cout<<"x_acc: "<<x_acc<<" y_acc: "<<y_acc<<endl;
+    delay(10);
   }
   return 0;
 }
