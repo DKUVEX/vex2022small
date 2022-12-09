@@ -47,10 +47,11 @@ void usercontrol(void) {
 
 int main() {
   vexDelay(200);
-  task GP1(positioning);
+  // task GP1(positioning);
   task GP2(GPSpositioning);
   task GP3(Inertialposiyioning);
-  task GP(posConfig);
+  task GP4(Filtpositioning)
+  // task GP(posConfig);
   task BS(base);
   task FW(flywheelContorl);
   task LA(launch);
