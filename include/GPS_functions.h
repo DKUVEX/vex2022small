@@ -20,12 +20,15 @@ static float globalRot = PI / 2;
 static float chasFacing = PI / 2;
 bool driftFlag = true;
 
-static double gps_xpos = 0;// xposition from gps
-static double gps_ypos = 0;// yposition from gps
-static double GPS_yaw_orientation = 0;// yaw orientation from GPS
-static double Iner_yaw_orientation = 0;// yaw orientation from Iner
-static double x_acc = 0;// x axis acceleration from Iner
-static double y_acc = 0;// y axis acceleration from Iner
+double gps_xpos = 0;// xposition from gps
+double gps_ypos = 0;// yposition from gps
+double GPS_yaw_orientation = 0;// yaw orientation from GPS
+double Iner_yaw_orientation = 0;// yaw orientation from Iner
+double x_acc = 0;// x axis acceleration from Iner
+double y_acc = 0;// y axis acceleration from Iner
+double xpos = 0;// filted xpos
+double ypos = 0;// filted ypos
+double yaw_orientation = 0;// filted orientation
 auto enc2cm = [](float enc, float wc) -> float { return enc * wc / 360; };
 //R-> [-pi,pi]
 auto absAng = [](float ang) -> float { return ang-2*PI*floor((ang+PI)/(2*PI));};
@@ -183,6 +186,23 @@ int Inertialposiyioning()
     // cout<<"yaw: "<<yaw_orientation<<endl;
     // cout<<"x_acc: "<<x_acc<<" y_acc: "<<y_acc<<endl;
     delay(10);
+  }
+  return 0;
+}
+int Filtpositioning()
+{
+  static double last_xpos = 0;
+  static double last_ypos = 0;
+  static double last_orientation = 0;
+  xpos = gps_xpos;
+  ypos = gps_ypos;
+  yaw_orientation = GPS_yaw_orientation;
+  if (last_xpos != xpos && last_ypos != ypos)
+  {
+    last_xpos = xpos;
+    last_ypos = ypos;
+    last_orientation = GPS_yaw_orientation;
+    /**/
   }
   return 0;
 }
