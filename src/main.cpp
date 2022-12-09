@@ -5,6 +5,11 @@ using namespace std;
 
 void autonomous(void) {
   chState = ctrl_AUTONOMOUS;
+  LA.spin(fwd, 20, voltageUnits::mV);
+  LB.spin(fwd, 20, voltageUnits::mV);
+  if (gps_xpos == 20 && gps_ypos == 20){
+    break;
+  }
   //runAuton();
   //oneminute310p();
   drift(50, 0, 1, 0.8);
