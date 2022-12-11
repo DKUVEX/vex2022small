@@ -99,6 +99,30 @@ int base(){
   return 0;
 }
 
+void mov_fwd(int time)
+{
+  LA.spin(fwd, 10000, voltageUnits::mV);
+  LB.spin(fwd, 10000, voltageUnits::mV);
+  RA.spin(fwd, -10000, voltageUnits::mV);
+  RB.spin(fwd, -10000, voltageUnits::mV);  
+  delay(time);
+  LA.spin(fwd, 0, voltageUnits::mV);
+  LB.spin(fwd, 0, voltageUnits::mV);
+  RA.spin(fwd, 0, voltageUnits::mV);
+  RB.spin(fwd, 0, voltageUnits::mV);  
+}
+void mov_bwd(int time)
+{
+  LA.spin(fwd, -10000, voltageUnits::mV);
+  LB.spin(fwd, -10000, voltageUnits::mV);
+  RA.spin(fwd, 10000, voltageUnits::mV);
+  RB.spin(fwd, 10000, voltageUnits::mV);  
+  delay(time);
+  LA.spin(fwd, 0, voltageUnits::mV);
+  LB.spin(fwd, 0, voltageUnits::mV);
+  RA.spin(fwd, 0, voltageUnits::mV);
+  RB.spin(fwd, 0, voltageUnits::mV);  
+}
 float shotPos2time(float dis){
   //distance unit: cm
   //time unit: ms

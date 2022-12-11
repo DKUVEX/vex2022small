@@ -168,7 +168,7 @@ int GPSpositioning() {
     //场地定位比较准确，但是在最靠近四周一格地垫会进入死区无法定位
     delay(10);
     // cout<<"gps_x: "<<GPS.xPosition()<<" gps_y: "<<GPS.yPosition()<<endl;
-    cout<<"gps_x: "<<gps_xpos<<" gps_y: "<<gps_ypos<<" gps_yaw: "<<GPS_yaw_orientation<<endl;
+    // cout<<"gps_x: "<<gps_xpos<<" gps_y: "<<gps_ypos<<" gps_yaw: "<<GPS_yaw_orientation<<endl;
     // cout<<"gpsPos: "<<gpsPo  s<<endl<<" x: "<<GPS.xPosition()<<" y: "<<GPS.yPosition()<<endl;
   }
   return 0;
@@ -191,19 +191,10 @@ int Inertialposiyioning()
 }
 int Filtpositioning()
 {
-  static double last_xpos = 0;
-  static double last_ypos = 0;
-  static double last_orientation = 0;
   xpos = gps_xpos;
   ypos = gps_ypos;
   yaw_orientation = GPS_yaw_orientation;
-  if (last_xpos != xpos && last_ypos != ypos)
-  {
-    last_xpos = xpos;
-    last_ypos = ypos;
-    last_orientation = GPS_yaw_orientation;
-    /**/
-  }
+
   return 0;
 }
 bool omnionly = true;
@@ -271,7 +262,7 @@ void drift(float driftX, float driftY, int tp = 1, float speedratio = 1.0f,
     }
     TLR << LR[1], LR[0];
     speedForward(tp == 0 ? TLR : LR);
-    cout << LR  << endl;
+    // cout << LR  << endl;
     vexDelay(10);
   }
   speedForward(Eigen::Vector2f(0.0f, 0.0f));

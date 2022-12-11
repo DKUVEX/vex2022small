@@ -5,15 +5,17 @@ using namespace std;
 
 void autonomous(void) {
   chState = ctrl_AUTONOMOUS;
-  LA.spin(fwd, 20, voltageUnits::mV);
-  LB.spin(fwd, 20, voltageUnits::mV);
-  if (gps_xpos == 20 && gps_ypos == 20){
-    break;
-  }
+  // LA.spin(fwd, 20, voltageUnits::mV);
+  // LB.spin(fwd, 20, voltageUnits::mV);
+  // if (gps_xpos == 20 && gps_ypos == 20){
+  //   break;
+  // }
   //runAuton();
   //oneminute310p();
-  drift(50, 0, 1, 0.8);
-  drift(-100, 0, 1, 0.8);
+  mov_fwd(500);
+  mov_bwd(500);
+  // drift(50, 0, 1, 0.8);
+  // drift(-100, 0, 1, 0.8);
 }
 
 void usercontrol(void) {
@@ -50,7 +52,7 @@ int main() {
   // task GP1(positioning);
   task GP2(GPSpositioning);
   task GP3(Inertialposiyioning);
-  task GP4(Filtpositioning)
+  task GP4(Filtpositioning);
   // task GP(posConfig);
   task BS(base);
   task FW(flywheelContorl);
