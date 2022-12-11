@@ -45,7 +45,7 @@ int main() {
   // task GP1(positioning);
   task GP2(GPSpositioning);
   task GP3(Inertialposiyioning);
-  task GP4(Filtpositioning)
+  task GP4(Filtpositioning);
   // task GP(posConfig);
   task BS(base);
   task FW(flywheelContorl);

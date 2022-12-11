@@ -23,6 +23,9 @@ bool driftFlag = true;
 double gps_xpos = 0;// xposition from gps
 double gps_ypos = 0;// yposition from gps
 double GPS_yaw_orientation = 0;// yaw orientation from GPS
+double gps_xpos_2 = 0;// xposition from gps_2
+double gps_ypos_2 = 0;// yposition from gps_2
+double GPS_yaw_orientation_2 = 0;// yaw orientation from GPS_2
 double Iner_yaw_orientation = 0;// yaw orientation from Iner
 double x_acc = 0;// x axis acceleration from Iner
 double y_acc = 0;// y axis acceleration from Iner
@@ -152,11 +155,10 @@ int positioning() {
 //写的好乱，重写一遍需要的部分
 int GPSpositioning() {
   delay(100);
-  // pros::gps_initialize_full(PORT13, 0, 0, 0, 0, 180);
   GPS.calibrate();
-  // cout<<"!!!!"<<endl;
+  GPS_2.calibrate();
   while (GPS.isCalibrating()) {delay(10);}
-  // cout<<"????"<<endl;
+  while (GPS_2.isCalibrating()) {delay(10);}
   // if(GPS.installed()) {cout<<"ok"<<endl;}
   // else {cout<<"not ok"<<endl;}
   while (true) {
@@ -165,10 +167,13 @@ int GPSpositioning() {
     gps_xpos = GPS.xPosition();
     gps_ypos = GPS.yPosition();
     GPS_yaw_orientation = GPS.orientation(yaw, deg);
+    gps_xpos_2 = GPS_2.xPosition();
+    gps_ypos_2 = GPS_2.yPosition();
+    GPS_yaw_orientation_2 = GPS_2.orientation(yaw, deg);
     //场地定位比较准确，但是在最靠近四周一格地垫会进入死区无法定位
     delay(10);
     // cout<<"gps_x: "<<GPS.xPosition()<<" gps_y: "<<GPS.yPosition()<<endl;
-    cout<<"gps_x: "<<gps_xpos<<" gps_y: "<<gps_ypos<<" gps_yaw: "<<GPS_yaw_orientation<<endl;
+    // cout<<"gps_x: "<<gps_xpos<<" gps_y: "<<gps_ypos<<" gps_yaw: "<<GPS_yaw_orientation<<endl;
     // cout<<"gpsPos: "<<gpsPo  s<<endl<<" x: "<<GPS.xPosition()<<" y: "<<GPS.yPosition()<<endl;
   }
   return 0;
@@ -191,19 +196,34 @@ int Inertialposiyioning()
 }
 int Filtpositioning()
 {
-  static double last_xpos = 0;
-  static double last_ypos = 0;
-  static double last_orientation = 0;
-  xpos = gps_xpos;
-  ypos = gps_ypos;
-  yaw_orientation = GPS_yaw_orientation;
-  if (last_xpos != xpos && last_ypos != ypos)
+  if ((gps_ypos<-1300&&(GPS_yaw_orientation<-150||GPS_yaw_orientation>150))||(gps_ypos>1300&&(GPS_yaw_orientation>-30||GPS_yaw_orientation<30))) //GPS1 back, gps2 front
   {
-    last_xpos = xpos;
-    last_ypos = ypos;
-    last_orientation = GPS_yaw_orientation;
-    /**/
+    ypos = gps_ypos_2;// when gps go to bline area, trust the other one
+    //should add a bias to mid point
   }
+  else if ((gps_ypos_2<-1300&&(GPS_yaw_orientation_2<-90||GPS_yaw_orientation_2>90))||(gps_ypos_2>1300&&(GPS_yaw_orientation_2>-90||GPS_yaw_orientation<90))) {//two gps will not blind at the same position
+    ypos = gps_ypos;
+    //should add a bias to mid point
+  }
+  else 
+  {
+    ypos = (gps_ypos+gps_ypos_2)/2;
+  }
+  if ((gps_xpos<-1300&&GPS_yaw_orientation<0)||(gps_xpos>1300&&GPS_yaw_orientation>0)) //GPS1 back, gps2 front
+  {
+    xpos = gps_xpos_2;// when gps go to bline area, trust the other one
+    //should add a bias to mid point
+  }
+  else if ((gps_xpos_2<-1300&&GPS_yaw_orientation_2<0)||(gps_xpos_2>1300&&GPS_yaw_orientation_2>0)) {//two gps will not blind at the same position
+    xpos = gps_xpos;
+    //should add a bias to mid point
+  }
+  else 
+  {
+    xpos = (gps_xpos+gps_xpos_2)/2;
+  }
+  yaw_orientation = GPS_yaw_orientation_2;//the front direction
+
   return 0;
 }
 bool omnionly = true;
