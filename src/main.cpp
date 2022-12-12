@@ -13,7 +13,7 @@ void autonomous(void) {
   //runAuton();
   //oneminute310p();
   mov_fwd(500);
-  mov_bwd(500);
+  // mov_bwd(500);
   // drift(50, 0, 1, 0.8);
   // drift(-100, 0, 1, 0.8);
 }
