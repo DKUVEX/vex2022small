@@ -31,6 +31,9 @@ motor fw2 = motor(PORT12,  ratio6_1, true);
 motor itk = motor(PORT20, ratio18_1, false); 
 motor ind = motor(PORT3, ratio18_1, false);
 
+motor rol = motor(PORT5, ratio18_1, false); // roll the rollers
+
+
 // Encoder
 encoder Hor = encoder(Brain.ThreeWirePort.G);
 encoder Ver = encoder(Brain.ThreeWirePort.A);

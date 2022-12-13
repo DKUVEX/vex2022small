@@ -38,7 +38,8 @@ void usercontrol(void) {
 
     intake(100*(R2-R1)*!L2);
     //index(100*BA);
-    
+    roller(100*BY);
+
     lastL1 = L1;
     // cout<<Hor.rotation(deg)<<"  "<<Ver.rotation(deg)<<endl;
     //printScreen(10,140,"x:%.2f y:%.2f v4gyro:%.2f v5gyro:%.2f",omniPos[0], omniPos[1], -v4gyro.rotation(),-Gyro.rotation());
