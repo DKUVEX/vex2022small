@@ -23,6 +23,10 @@ void index(float speed){
 void roller(float speed){
   rol.spin(fwd, 120*speed, voltageUnits::mV);
 } 
+
+void extend(float speed){
+  ext.spin(fwd, 120*speed, voltageUnits::mV);
+}
 void kick(int ktime){
   for(int i=0;i<ktime;i++){
     sol.set(1);
