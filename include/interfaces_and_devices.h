@@ -10,7 +10,6 @@
 #include "v5.h"
 #include "v5_vcs.h"
 #include <eigen-3.4.0/Eigen/Dense>
-
 using namespace vex;
 using signature = vision::signature;
 using code = vision::code;
@@ -31,7 +30,7 @@ motor fw2 = motor(PORT12,  ratio6_1, true);
 motor itk = motor(PORT20, ratio18_1, false); 
 motor ind = motor(PORT3, ratio18_1, false);
 
-motor rol = motor(PORT5, ratio18_1, false); // roll the rollers
+motor rol = motor(PORT19, ratio18_1, false); // roll the rollers
 
 
 // Encoder
@@ -42,7 +41,7 @@ digital_out sol = digital_out(Brain.ThreeWirePort.C);
 
 // Sensor
 gps GPS = gps(PORT13, 0, 0, mm, 0);//back
-gps GPS_2 = gps(PORT15, 0, 0, mm, 0);//front
+gps GPS_2 = gps(PORT18, 0, 0, mm, 0);//front
 
 inertial Gyro = inertial(PORT3);//old inertial
 inertial Iner = inertial(PORT14);

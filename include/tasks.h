@@ -3,6 +3,25 @@
 
 #include "GPS_functions.h"
 
+/*caculate the difference angle between current robot direction and target direction, at degree unit*/
+double turn_to_at_theta(double target_x, double target_y)
+{
+  double angle = atan2((target_x - xpos), (target_y - ypos));
+  double theta = - angle*(180/M_PI);
+  double between_theta = theta - yaw_orientation;
+  return between_theta;
+}
+/*rotate the robot at a specific angle use gps*/
+void rotate_angle(double theta)
+{
+  
+}
+/*move the robot at a specific distence use gps*/
+void move_meter(double dis)
+{
+
+}
+
 void fw(float speed){
   if(speed < 0){
     fw1.spin(fwd, 0, voltageUnits::mV);

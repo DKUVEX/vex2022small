@@ -227,6 +227,7 @@ int Filtpositioning()
 
   return 0;
 }
+
 bool omnionly = true;
 bool GPSDisable = false;
 
