@@ -13,8 +13,25 @@ void autonomous(void) {
   // }
   //runAuton();
   //oneminute310p();
-  mov_fwd(500);
+  //测试直到小车一秒走1块 左转一秒180度 右转1秒180度
+  intake(100);
+  fwState = fw_HSPD;
 
+  mov_fwd(1100);
+  delay(5000);
+  rotate_right(90);
+  kick(3);
+  rotate_left(340);
+  mov_fwd(1514);
+  delay(3000);
+  rotate_right(500);
+  kick(3);
+  rotate_left(1000);
+  mov_fwd(453);
+  rotate_left(250);
+  mov_fwd(1300);
+  intake(0);
+  fwState = fw_OFF;  
   // mov_bwd(500);
   // drift(50, 0, 1, 0.8);
   // drift(-100, 0, 1, 0.8);

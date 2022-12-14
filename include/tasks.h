@@ -99,18 +99,48 @@ int base(){
 
   return 0;
 }
-
+int speed_factor = 5;
 void mov_fwd(int time)
 {
-  LA.spin(fwd, 10000, voltageUnits::mV);
-  LB.spin(fwd, 10000, voltageUnits::mV);
-  RA.spin(fwd, -10000, voltageUnits::mV);
-  RB.spin(fwd, -10000, voltageUnits::mV);  
-  delay(time);
-  LA.spin(fwd, -10000, voltageUnits::mV);
-  LB.spin(fwd, -10000, voltageUnits::mV);
-  RA.spin(fwd, 10000, voltageUnits::mV);
-  RB.spin(fwd, 10000, voltageUnits::mV);  
+  if (time>=200) 
+  {
+    for (int i=0;i<=100;i++)
+    {
+      LA.spin(fwd, speed_factor*10*i, voltageUnits::mV);
+      LB.spin(fwd, speed_factor*10*i, voltageUnits::mV);
+      RA.spin(fwd, -speed_factor*10*i, voltageUnits::mV);
+      RB.spin(fwd, -speed_factor*10*i, voltageUnits::mV); 
+    }
+    LA.spin(fwd, speed_factor*1000, voltageUnits::mV);
+    LB.spin(fwd, speed_factor*1000, voltageUnits::mV);
+    RA.spin(fwd, -speed_factor*1000, voltageUnits::mV);
+    RB.spin(fwd, -speed_factor*1000, voltageUnits::mV);  
+    delay(time-200);
+    for (int i=100;i>=0;i--)
+    {
+      LA.spin(fwd, speed_factor*10*i, voltageUnits::mV);
+      LB.spin(fwd, speed_factor*10*i, voltageUnits::mV);
+      RA.spin(fwd, -speed_factor*10*i, voltageUnits::mV);
+      RB.spin(fwd, -speed_factor*10*i, voltageUnits::mV); 
+    }
+  }
+  else
+  {
+    for (int i=0;i<=time/2;i++)
+    {
+      LA.spin(fwd, speed_factor*10*i, voltageUnits::mV);
+      LB.spin(fwd, speed_factor*10*i, voltageUnits::mV);
+      RA.spin(fwd, -speed_factor*10*i, voltageUnits::mV);
+      RB.spin(fwd, -speed_factor*10*i, voltageUnits::mV); 
+    }
+    for (int i=time/2;i>=0;i--)
+    {
+      LA.spin(fwd, speed_factor*10*i, voltageUnits::mV);
+      LB.spin(fwd, speed_factor*10*i, voltageUnits::mV);
+      RA.spin(fwd, -speed_factor*10*i, voltageUnits::mV);
+      RB.spin(fwd, -speed_factor*10*i, voltageUnits::mV); 
+    }
+  }
   LA.spin(fwd, 0, voltageUnits::mV);
   LB.spin(fwd, 0, voltageUnits::mV);
   RA.spin(fwd, 0, voltageUnits::mV);
@@ -151,7 +181,7 @@ void keep_rotate(int orientation)
 }
 void keep_forward()
 {
-  LA.spin(fwd, 10000, voltageUnits::mV);
+  LA.spin(fwd, 10000, voltageUnits::mV);  
   LB.spin(fwd, 10000, voltageUnits::mV);
   RA.spin(fwd, -10000, voltageUnits::mV);
   RB.spin(fwd, -10000, voltageUnits::mV);  
@@ -172,10 +202,10 @@ void stop_action()
 }
 void rotate_right(int time)
 {
-  LA.spin(fwd, -10000, voltageUnits::mV);
-  LB.spin(fwd, -10000, voltageUnits::mV);
-  RA.spin(fwd, 10000, voltageUnits::mV);
-  RB.spin(fwd, 10000, voltageUnits::mV);  
+  LA.spin(fwd, -15000, voltageUnits::mV);
+  LB.spin(fwd, -15000, voltageUnits::mV);
+  RA.spin(fwd, 15000, voltageUnits::mV);
+  RB.spin(fwd, 15000, voltageUnits::mV);  
   delay(time);
   LA.spin(fwd, 0, voltageUnits::mV);
   LB.spin(fwd, 0, voltageUnits::mV);
