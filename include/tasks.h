@@ -2,26 +2,6 @@
 #define TASKS_H
 
 #include "GPS_functions.h"
-
-/*caculate the difference angle between current robot direction and target direction, at degree unit*/
-double turn_to_at_theta(double target_x, double target_y)
-{
-  double angle = atan2((target_x - xpos), (target_y - ypos));
-  double theta = - angle*(180/M_PI);
-  double between_theta = theta - yaw_orientation;
-  return between_theta;
-}
-/*rotate the robot at a specific angle use gps*/
-void rotate_angle(double theta)
-{
-  
-}
-/*move the robot at a specific distence use gps*/
-void move_meter(double dis)
-{
-
-}
-
 void fw(float speed){
   if(speed < 0){
     fw1.spin(fwd, 0, voltageUnits::mV);
@@ -160,20 +140,29 @@ void rotate_left(int time)
   RA.spin(fwd, 0, voltageUnits::mV);
   RB.spin(fwd, 0, voltageUnits::mV);  
 }
-void keep_rotate_left()
+/*orientation = -1 is left, *orientation = 1 is right, */
+void keep_rotate(int orientation)
 {
-  LA.spin(fwd, -10000, voltageUnits::mV);
-  LB.spin(fwd, -10000, voltageUnits::mV);
-  RA.spin(fwd, -10000, voltageUnits::mV);
-  RB.spin(fwd, -10000, voltageUnits::mV);  
+  int rotation_factor = orientation*5000;
+  LA.spin(fwd, rotation_factor, voltageUnits::mV);
+  LB.spin(fwd, rotation_factor, voltageUnits::mV);
+  RA.spin(fwd, rotation_factor, voltageUnits::mV);
+  RB.spin(fwd, rotation_factor, voltageUnits::mV);  
 }
-void keep_rotate_right()
+void keep_forward()
 {
   LA.spin(fwd, 10000, voltageUnits::mV);
   LB.spin(fwd, 10000, voltageUnits::mV);
-  RA.spin(fwd, 10000, voltageUnits::mV);
-  RB.spin(fwd, 10000, voltageUnits::mV);  
+  RA.spin(fwd, -10000, voltageUnits::mV);
+  RB.spin(fwd, -10000, voltageUnits::mV);  
 }
+// void keep_rotate_right()
+// {
+//   LA.spin(fwd, 10000, voltageUnits::mV);
+//   LB.spin(fwd, 10000, voltageUnits::mV);
+//   RA.spin(fwd, 10000, voltageUnits::mV);
+//   RB.spin(fwd, 10000, voltageUnits::mV);  
+// }
 void stop_action()
 {
   LA.spin(fwd, 0, voltageUnits::mV);
@@ -193,6 +182,40 @@ void rotate_right(int time)
   RA.spin(fwd, 0, voltageUnits::mV);
   RB.spin(fwd, 0, voltageUnits::mV);  
 }
+
+/*caculate the difference angle between current robot direction and target direction, at degree unit*/
+double turn_to_at_theta(double target_x, double target_y)
+{
+  double angle = atan2((target_x - xpos), (target_y - ypos));
+  double theta = - angle*(180/M_PI);
+  return theta;
+}
+/*rotate the robot at a specific angle use gps*/
+void rotate_angle(double theta)
+{
+  while (theta <= yaw_orientation-5||theta >= yaw_orientation+5)
+  {
+    if(theta>yaw_orientation)
+    {
+        keep_rotate(-1);
+    }
+    else if (theta<yaw_orientation)
+    {
+        keep_rotate(1);
+    }
+  }
+  stop_action();
+}
+/*move the robot at a specific distence use gps*/
+void move_to_position(double target_x, double target_y)
+{
+  while (xpos<=target_x-10||xpos>target_x+10)
+  {
+
+  }
+}
+
+
 float shotPos2time(float dis){
   //distance unit: cm
   //time unit: ms
