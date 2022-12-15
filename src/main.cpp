@@ -14,25 +14,46 @@ void autonomous(void) {
   //runAuton();
   //oneminute310p();
   //测试直到小车一秒走1块 左转一秒180度 右转1秒180度
-  intake(100);
+  //第一次前进长度还没确定
+  intake(-100);
   fwState = fw_HSPD;
 
-  mov_fwd(1100);
-  delay(5000);
-  rotate_right(90);
-  kick(3);
-  rotate_left(340);
-  mov_fwd(1514);
-  delay(3000);
-  rotate_right(500);
-  kick(3);
-  rotate_left(1000);
+  mov_fwd(1400);
+  delay(1500);
+  rotate_left(900);
+  delay(100);
+  kick(1);
+  delay(500);
+  kick(1);
+  delay(500);
+  kick(1);
+  delay(500);
+  rotate_right(680);
+  mov_fwd(1814);
+  delay(2500);
+  rotate_left(650);
+  delay(100);
+  kick(1);
+  delay(500);
+  kick(1);
+  delay(500);
+  kick(1);
+  delay(500);
+  // kick(3);
+  rotate_right(150);
+  mov_fwd(553);
+  rotate_left(300);
   mov_fwd(453);
-  rotate_left(250);
-  mov_fwd(1300);
+  // rotate_right(80);
+  mov_fwd(2300);
   intake(0);
   fwState = fw_OFF;  
   // mov_bwd(500);
+  
+  // mov_fwd(1000);
+  // rotate_left(1000);
+  // rotate_right(1000);
+  
   // drift(50, 0, 1, 0.8);
   // drift(-100, 0, 1, 0.8);
 }
@@ -58,7 +79,7 @@ void usercontrol(void) {
     intake(100*(R2-R1)*!L2);
     //index(100*BA);
     roller(100*BY);
-    extend(100*UP);
+    extend(-20*UP);
     lastL1 = L1;
     // cout<<Hor.rotation(deg)<<"  "<<Ver.rotation(deg)<<endl;
     //printScreen(10,140,"x:%.2f y:%.2f v4gyro:%.2f v5gyro:%.2f",omniPos[0], omniPos[1], -v4gyro.rotation(),-Gyro.rotation());

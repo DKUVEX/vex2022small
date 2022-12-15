@@ -162,18 +162,43 @@ void mov_bwd(int time)
   RA.spin(fwd, 0, voltageUnits::mV);
   RB.spin(fwd, 0, voltageUnits::mV);  
 }
+double rotate_left_factor = 5.1;
 void rotate_left(int time)
 {
-  LA.spin(fwd, -10000, voltageUnits::mV);
-  LB.spin(fwd, -10000, voltageUnits::mV);
-  RA.spin(fwd, -10000, voltageUnits::mV);
-  RB.spin(fwd, -10000, voltageUnits::mV);  
+  LA.spin(fwd, -rotate_left_factor*1000, voltageUnits::mV);
+  LB.spin(fwd, -rotate_left_factor*1000, voltageUnits::mV);
+  RA.spin(fwd, -rotate_left_factor*1000, voltageUnits::mV);
+  RB.spin(fwd, -rotate_left_factor*1000, voltageUnits::mV);  
   delay(time);
+  LA.spin(fwd, 1000, voltageUnits::mV);
+  LB.spin(fwd, 1000, voltageUnits::mV);
+  RA.spin(fwd, 1000, voltageUnits::mV);
+  RB.spin(fwd, 1000, voltageUnits::mV);  
+  delay(100);
   LA.spin(fwd, 0, voltageUnits::mV);
   LB.spin(fwd, 0, voltageUnits::mV);
   RA.spin(fwd, 0, voltageUnits::mV);
   RB.spin(fwd, 0, voltageUnits::mV);  
 }
+double rotate_right_factor = 5.1;
+void rotate_right(int time)
+{
+  LA.spin(fwd, rotate_right_factor*1000, voltageUnits::mV);
+  LB.spin(fwd, rotate_right_factor*1000, voltageUnits::mV);
+  RA.spin(fwd, rotate_right_factor*1000, voltageUnits::mV);
+  RB.spin(fwd, rotate_right_factor*1000, voltageUnits::mV);  
+  delay(time);
+  LA.spin(fwd, -1000, voltageUnits::mV);
+  LB.spin(fwd, -1000, voltageUnits::mV);
+  RA.spin(fwd, -1000, voltageUnits::mV);
+  RB.spin(fwd, -1000, voltageUnits::mV);  
+  delay(100);
+  LA.spin(fwd, 0, voltageUnits::mV);
+  LB.spin(fwd, 0, voltageUnits::mV);
+  RA.spin(fwd, 0, voltageUnits::mV);
+  RB.spin(fwd, 0, voltageUnits::mV);  
+}
+
 /*orientation = -1 is left, *orientation = 1 is right, */
 void keep_rotate(int orientation)
 {
@@ -199,18 +224,6 @@ void keep_forward()
 // }
 void stop_action()
 {
-  LA.spin(fwd, 0, voltageUnits::mV);
-  LB.spin(fwd, 0, voltageUnits::mV);
-  RA.spin(fwd, 0, voltageUnits::mV);
-  RB.spin(fwd, 0, voltageUnits::mV);  
-}
-void rotate_right(int time)
-{
-  LA.spin(fwd, -15000, voltageUnits::mV);
-  LB.spin(fwd, -15000, voltageUnits::mV);
-  RA.spin(fwd, 15000, voltageUnits::mV);
-  RB.spin(fwd, 15000, voltageUnits::mV);  
-  delay(time);
   LA.spin(fwd, 0, voltageUnits::mV);
   LB.spin(fwd, 0, voltageUnits::mV);
   RA.spin(fwd, 0, voltageUnits::mV);
@@ -292,7 +305,7 @@ int flywheelContorl(){
       }
       case fw_LSPD:{
         //2350
-        fwTargetSpeed = 2135; //2135 
+        fwTargetSpeed = 1950; //1950 
 
         ifSpeedOK = fwSpeed > (fwTargetSpeed-150) && fwSpeed < (fwTargetSpeed+50);
         if(ifFwPID && fwSpeed < (fwTargetSpeed-50)) ifFwPID = false;

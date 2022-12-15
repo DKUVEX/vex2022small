@@ -32,7 +32,7 @@ motor ind = motor(PORT3, ratio18_1, false);
 
 motor rol = motor(PORT19, ratio18_1, false); // roll the rollers
 
-motor ext = motor(PORT19, ratio18_1, false); // extend the rope
+motor ext = motor(PORT14, ratio18_1, false); // extend the rope
 
 // Encoder
 encoder Hor = encoder(Brain.ThreeWirePort.G);
