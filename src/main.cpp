@@ -76,7 +76,7 @@ void usercontrol(void) {
       kick(1);
     }
 
-    intake(100*(R2-R1)*!L2);
+    intake(120*(R2-R1)*!L2);
     //index(100*BA);
     roller(100*BY);
     extend(-20*UP);
