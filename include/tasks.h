@@ -317,7 +317,7 @@ int flywheelContorl(){
         break;
       }
       case fw_HSPD:{
-        fwTargetSpeed = 2675; //2675
+        fwTargetSpeed = 2600; //2675
 
         ifSpeedOK = fwSpeed > (fwTargetSpeed-5) && fwSpeed < (fwTargetSpeed+5);
         if(ifFwPID && fwSpeed < (fwTargetSpeed-30)) ifFwPID = false;
